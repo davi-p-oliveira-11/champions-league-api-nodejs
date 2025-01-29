@@ -19,8 +19,12 @@ export const postPlayer = async (req: Request, res: Response) => {
 
   if (httpResponse) {
     res.status(httpResponse.statusCode).json(httpResponse.body);
-  } else {
-    const response = await noContent();
-    res.status(response.statusCode).json(response.body);
   }
+};
+
+export const deletePlayer = async (req: Request, res: Response) => {
+  const id = parseInt(req.params.id);
+  const httpResponse = await service.deletePlayerService(id);
+
+  res.status(httpResponse.statusCode).json(httpResponse.body);
 };
