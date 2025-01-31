@@ -33,4 +33,5 @@ export const updatePlayer = async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
   const bodyValue: StatisticsModel = req.body;
   const httpResponse = await service.updatePlayerService(id, bodyValue);
+  res.status(httpResponse.statusCode).json(httpResponse.body);
 };

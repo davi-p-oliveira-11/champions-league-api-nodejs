@@ -1,3 +1,4 @@
+import { response } from "express";
 import { PlayerModel } from "../models/player-model";
 import { StatisticsModel } from "../models/statistics-model";
 import * as PlayerRespository from "../repositories/players-repository";
@@ -22,9 +23,9 @@ export const getPlayerByIdService = async (id: number) => {
   let response = null;
 
   if (data) {
-    response = HttpResponse.ok(data);
+    response = await HttpResponse.ok(data);
   } else {
-    response = HttpResponse.noContent();
+    response = await HttpResponse.noContent();
   }
 
   return response;
@@ -36,9 +37,9 @@ export const createPlayerService = async (player: PlayerModel) => {
   // vetrify if it's empty
   if (Object.keys(player).length !== 0) {
     await PlayerRespository.insertPlayer(player);
-    response = HttpResponse.created();
+    response = await HttpResponse.created();
   } else {
-    response = HttpResponse.badRequest();
+    response = await HttpResponse.badRequest();
   }
 
   return response;
@@ -47,11 +48,22 @@ export const createPlayerService = async (player: PlayerModel) => {
 export const deletePlayerService = async (id: number) => {
   let response = null;
   await PlayerRespository.deleteOnePlayer(id);
-  response = HttpResponse.ok({ message: "deleted" });
+  response = await HttpResponse.ok({ message: "deleted" });
   return response;
 };
 
 export const updatePlayerService = async (
   id: number,
   statistics: StatisticsModel
-) => {};
+) => {
+  const data = await PlayerRespository.findAndModifyPlayer(id, statistics);
+  let response = null;
+
+  if (Object.keys(data).length === 0) {
+    response = await HttpResponse.badRequest();
+  } else {
+    response = await HttpResponse.ok(data);
+  }
+
+  return response;
+};
